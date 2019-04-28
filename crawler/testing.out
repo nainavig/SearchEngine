@@ -1,0 +1,118 @@
+test1
+mkdir: cannot create directory ‘test1’: File exists
+testing http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html at depth 6
+ 0   Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 0     Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 0  Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 1      Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/A.html
+ 1      Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/A.html
+ 1    Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/A.html
+ 1      Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/A.html
+ 1   Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/A.html
+ 2       Found: https://en.wikipedia.org/wiki/Algorithm
+ 2    IgnExtrn: https://en.wikipedia.org/wiki/Algorithm
+ 2       Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/B.html
+ 2       Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/B.html
+ 2       Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 2     IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 2     Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/B.html
+ 2       Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/B.html
+ 2    Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/B.html
+ 3        Found: https://en.wikipedia.org/wiki/Breadth-first_search
+ 3     IgnExtrn: https://en.wikipedia.org/wiki/Breadth-first_search
+ 3        Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/C.html
+ 3        Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/C.html
+ 3        Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/D.html
+ 3        Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/D.html
+ 3        Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/E.html
+ 3        Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/E.html
+ 3        Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 3      IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 3      Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/E.html
+ 3        Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/E.html
+ 3     Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/E.html
+ 4         Found: https://en.wikipedia.org/wiki/ENIAC
+ 4      IgnExtrn: https://en.wikipedia.org/wiki/ENIAC
+ 4         Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/F.html
+ 4         Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/F.html
+ 4         Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/G.html
+ 4         Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/G.html
+ 4         Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/A.html
+ 4       IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/A.html
+ 4         Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 4       IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 4       Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/G.html
+ 4         Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/G.html
+ 4      Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/G.html
+ 5          Found: https://en.wikipedia.org/wiki/Graph_traversal
+ 5       IgnExtrn: https://en.wikipedia.org/wiki/Graph_traversal
+ 5          Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/H.html
+ 5          Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/H.html
+ 5          Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 5        IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 5        Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/H.html
+ 5          Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/H.html
+ 5       Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/H.html
+ 6           Found: https://en.wikipedia.org/wiki/Huffman_coding
+ 6        IgnExtrn: https://en.wikipedia.org/wiki/Huffman_coding
+ 6           Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/B.html
+ 6         IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/B.html
+ 6           Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 6         IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 4       Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/F.html
+ 4         Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/F.html
+ 4      Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/F.html
+ 5          Found: https://en.wikipedia.org/wiki/Fast_Fourier_transform
+ 5       IgnExtrn: https://en.wikipedia.org/wiki/Fast_Fourier_transform
+ 5          Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/H.html
+ 5        IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/H.html
+ 5          Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 5        IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 3      Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/D.html
+ 3        Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/D.html
+ 3     Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/D.html
+ 4         Found: https://en.wikipedia.org/wiki/Depth-first_search
+ 4      IgnExtrn: https://en.wikipedia.org/wiki/Depth-first_search
+ 4         Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 4       IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 3      Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/C.html
+ 3        Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/C.html
+ 3     Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/C.html
+ 4         Found: https://en.wikipedia.org/wiki/Computational_biology
+ 4      IgnExtrn: https://en.wikipedia.org/wiki/Computational_biology
+ 4         Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/D.html
+ 4       IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/D.html
+ 4         Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+ 4       IgnDupl: http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html
+test2: tests invalid depth
+mkdir: cannot create directory ‘test2’: File exists
+testing http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html at depth 11
+
+MaxDepth must be integer in range [1...10]
+test3: tests invalid directory
+testing http://old-www.cs.dartmouth.edu/~cs50/data/tse/letters/index.html with bad dir
+
+Error: Invalid pageDirectory
+test4: tests on page with only wikipedia links
+mkdir: cannot create directory ‘test4’: File exists
+testing http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/index.html
+ 0   Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/index.html
+ 0     Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/index.html
+ 0  Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/index.html
+ 1      Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Computer_science.html
+ 1      Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Computer_science.html
+ 1      Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/C_(programming_language).html
+ 1      Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/C_(programming_language).html
+ 1      Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Unix.html
+ 1      Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Unix.html
+ 1      Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Dartmouth_College.html
+ 1      Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Dartmouth_College.html
+ 1      Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Hash_table.html
+ 1      Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Hash_table.html
+ 1      Found: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Linked_list.html
+ 1      Added: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Linked_list.html
+ 1    Fetched: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Linked_list.html
+ 1      Saved: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Linked_list.html
+ 1   Scanning: http://old-www.cs.dartmouth.edu/~cs50/data/tse/wikipedia/wiki/Linked_list.html
+ 2       Found: http://en.wikipedia.org/wiki/File:Question_book-new.svg
+error URL cannot be normalized
