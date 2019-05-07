@@ -1,6 +1,6 @@
 // Naina Vig
 // test file for indexer
-
+//
 #include <stdlib.h>
 #include <stdio.h>
 #include "../libcs50/file.h"
