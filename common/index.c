@@ -32,22 +32,36 @@ indexSave(hashtable_t *index, FILE *fp){
         hashtable_iterate(index, fp, writeHashtablePair);
 }
 
+
+// loads file contents into index
 hashtable_t *
 indexLoad(FILE *fp){
 
-        hashtable_t *index = hashtable_new(13);
+	if (fp == NULL){
+		printf("invalid file pointer\n");
+		return NULL;
+	}
+
+        hashtable_t *index = hashtable_new(100);
 
         int lines = lines_in_file(fp);
         int i = 0;
+
+	// loop through each line in file
         while (i < lines){
 
+		// read first word in line
                 char *word = freadwordp(fp);
-                hashtable_insert(index, word, counters_new());
-                counters_t *counters = hashtable_find(index, word);
+
+		// initialize counters and insert word into hashtable
+		counters_t *counters = counters_new();
+                hashtable_insert(index, word, counters);
 
                 int docID;
                 int count;
                 int output;
+
+		// add counts
                 while ((output = fscanf(fp, "%d %d ", &docID, &count)) == 2){
                         counters_set(counters, docID, count);
                 }

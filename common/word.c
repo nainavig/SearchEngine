@@ -8,13 +8,13 @@
 #include "word.h"
 
 char *normalizeWord(char *word){
-	int len = strlen(word);
-	char *wordLower = malloc(len*sizeof(char));
+	char *wordLower = malloc(sizeof(word)+1);
 
-	for (int i = 0; i < len; i++){
+	int i;
+	for (i = 0; i < strlen(word); i++){
 		wordLower[i] = tolower(word[i]);
 	}
+	wordLower[i] = '\0';
 	return wordLower;
 }
-
 
