@@ -1,4 +1,4 @@
-### Naina Vig
+#### Naina Vig
 
 ## Indexer Design Specifications
 
