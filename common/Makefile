@@ -1,6 +1,6 @@
 # Naina Vig
 # makefile for common dir
-
+#
 L = ../libcs50
 
 OBJS = word.o pagedir.o index.o $L/jhash.o $L/memory.o $L/hashtable.o $L/set.o $L/counters.o $L/file.o

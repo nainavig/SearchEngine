@@ -1,6 +1,6 @@
 // Naina Vig
 // index.c - index utility functions
-
+//
 #include <stdio.h>
 #include <stdlib.h>
 #include "../libcs50/hashtable.h"
