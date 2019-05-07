@@ -40,8 +40,8 @@ valgrind: $(PROG)
 	valgrind ./(PROG)
 
 
-test: $(PROG)
-	./$(PROG)
+test: testing.sh
+	./testing.sh
 
 clean:
 	rm -rf *.dSYM  # MacOS debugger info
