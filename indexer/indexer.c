@@ -15,6 +15,12 @@
 #include "../libcs50/file.h"
 
 
+inline static void logr(const char *word, const int depth, const char *url)
+{
+  printf("%2d %*s%9s: %s\n", depth, depth, "", word, url);
+}
+
+
 // used in debugging for printing hashtable
 void print_item(FILE *fp, const char *key, void *item){
 	counters_print(item, fp);
@@ -74,7 +80,7 @@ indexBuilder(char *pageDirectory){
 		// move info into webpage
 		webpage_t *wp = doctoWebpage(fp);
 
-
+		logr("Loaded", webpage_getDepth(wp), webpage_getURL(wp));
 		// loop through words in webpage, add doc to word counts 
 		int pos = 0;
 		char *word;
@@ -86,9 +92,11 @@ indexBuilder(char *pageDirectory){
 				char *normalizedWord = normalizeWord(word);	
 				counters_t *counters = hashtable_find(index, normalizedWord);
 				if (counters == NULL){
+					logr("Add word to index", webpage_getDepth(wp), normalizedWord);
 					counters = counters_new();
 					hashtable_insert(index, normalizedWord, counters);
 				}
+				logr("Inc word count", webpage_getDepth(wp), normalizedWord);
 				counters_add(counters, docID);
 				//free(normalizedWord);
 			}

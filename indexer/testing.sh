@@ -29,7 +29,6 @@ rm indexer1 indexer1.sorted indexertest1
 echo testing on toscrape directory
 
 ./indexer toscrape-depth-2/ scrape 
-cat scrape
 
 ./indextest scrape stest
 
