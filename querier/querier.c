@@ -28,23 +28,26 @@ typedef struct two_cntrs{
 void iter_func(void *arg, const int key, const int count){
 	two_cntrs_t *t = arg;
 	counters_t *c1 = t->c1;
+	counters_t *empty = t->empty;
 	int count1;
 	if ((count1 = counters_get(c1, key)) != 0){
 		if (count < count1){
-			counters_set(t->empty, key, count);
+			counters_set(empty, key, count);
 		} else {
-			counters_set(t->empty, key, count1);
+			counters_set(empty, key, count1);
 		}
 	}
 }
 
 // computes counters intersection
-counters_t * counters_intersect(counters_t *counters, counters_t *new){
+counters_t *counters_intersect(counters_t *counters, counters_t *new){
+	counters_t *new_intersection = counters_new();
 	two_cntrs_t *t = malloc(sizeof(two_cntrs_t));
 	t->c1 = new;
-	t->empty = counters_new();
+	t->empty = new_intersection;
 	counters_iterate(counters, t, iter_func);
-	return t->empty;
+	free(t);
+	return new_intersection;
 }
 
 // used for computing counters union
@@ -86,100 +89,105 @@ bool is_valid(char *p){
 
 /**************************** display results **********************************/
 
+// used as node in sorted array
+typedef struct sort_node {
+	int key;
+	int count;
+} sort_node_t;
 
-void
-display_results(counters_t *counters, char *pageDirectory){
-	counters_print(counters, stdout);
+
+// used to store array and index info as arg to set iterate
+typedef struct list {
+	sort_node_t ** arr;
+	int *i;
+} list_t;
+
+// called by counters_iterate, helps get size of counters
+void get_size(void *arg, const int key, const int count){
+	*(int*)arg = (*(int*)arg) + 1;
 }
 
+// called by counters_iterate, helps sort counters
+void sort_helper(void *arg, const int key, const int count){
+
+	// create new node to add to list
+	sort_node_t *s = malloc(sizeof(sort_node_t));
+	s->key = key;
+	s->count = count;
+
+
+	// get info from arg
+	list_t *t = arg;
+	sort_node_t ** arr = t->arr;
+	int *i = t->i;
+
+	// insert into sorted list
+	int j = (*i)-1;
+	while (j >= 0 && arr[j]->count > count){
+		arr[j + 1] = arr[j];
+		j = j - 1;
+	}
+	arr[j+1] = s;
+
+	// increment index
+	(*i) = (*i) + 1;
+}
+
+
+// sorts counters into array of (key, count) structs
+list_t *
+sort_counters(counters_t *counters){
+	int c_size = 0;
+	counters_iterate(counters, &c_size, get_size);
+
+	sort_node_t ** arr = malloc(sizeof(sort_node_t)*c_size);
+
+	list_t *l = malloc(sizeof(list_t));
+	l->arr = arr;
+	int j = 0;
+	l->i = &j; 
+
+	counters_iterate(counters, l, sort_helper);
+
+	return l;
+}
+
+void 
+display_results(list_t *l, char *pageDirectory){
+	sort_node_t ** arr = l->arr;
+	int *length = l->i;
+
+	for (int i = 0; i < *length; i++){
+		printf("%d: %d", arr[i]->key, arr[i]->count);
+	}
+}
+
+void duplicate_helper(void *arg, const int key, const int count){
+	counters_t *counters = arg;
+	counters_set(counters, key, count);
+}
+
+counters_t *
+duplicate_counters(counters_t *counters){
+	counters_t *new_counters = counters_new();
+
+	counters_iterate(counters, new_counters, duplicate_helper);
+	return new_counters;
+}
 
 
 /*************************** main algorithm ***************************************/
 
-counters_t *
-querier(hashtable_t *index, char *line){
-	char *p1 = line;
-	char *p2 = line;
+typedef struct parsed_line {
+	char ** arr;
+	int num_words;
+} parsed_line_t;
 
 
-	counters_t *c_union = counters_new();
-	counters_t *c_intersect = NULL;
-
-
-	// used to determine whether line starts, ends, or has duplicate conjunctions
-	bool conjunction_last_seen = true;
-
-	while (*p2 != '\n'){
-			
-		// if line contains invalid input character raise error
-		if (!is_valid(p2)){
-			printf("Error: only enter alphabetical characters and spaces\n");
-			return NULL;
-		}
-
-		// reach end of word
-		if ((*p2 == ' ')){
-			*p2 = '\0';
-			// ensure p1 not empty space (will happen when space in input)
-			if (!is_empty(p1)){
-				// check if p1 is conjunction
-				if (is_conjunction(p1)) {
-					if (conjunction_last_seen) {
-						printf("Error: cannot have two adjacent conjunctions\n");
-						return NULL;
-					}
-					conjunction_last_seen = true;
-					if (strcmp(p1, "or") == 0){
-						counters_union(c_union, c_intersect);
-						c_intersect = NULL;
-					}
-				} else {
-					// valid word retrived
-					printf("%s\n", p1);
-					counters_t *counters = hashtable_find(index, p1);
-					if (counters != NULL){
-						if (c_intersect == NULL){
-							c_intersect = counters;
-						} else {
-							c_intersect = counters_intersect(c_intersect, counters);
-						}
-					}
-						conjunction_last_seen = false;
-				}
-			}
-			// initialize start to new word
-			p1 = p2+1;
-		}
-		p2++;
-	}
-	// check ending word
-	if (p1 != line){
-		*p2 = '\0';
-		if (!is_empty(p1)){
-			conjunction_last_seen = is_conjunction(p1);
-		}
-		if (conjunction_last_seen){
-			printf("Error: can't end with conjunction\n");
-			return NULL;
-		}
-		if (!is_empty(p1)){
-			printf("%s", p1);
-			counters_t *counters = hashtable_find(index, p1);
-			if (c_intersect == NULL){
-				c_intersect = counters;
-			} else {
-				c_intersect = counters_intersect(c_intersect, counters);
-			}
-		}
-	}
-	counters_union(c_union, c_intersect);
-	return c_union;
-	
-}
-
-
-char **parse_input(char *line){
-	char **arr = malloc(20*sizeof(char*));
+parsed_line_t *
+parse_input(char *line){
+	parsed_line_t *s = malloc(sizeof(parsed_line_t)); 
+	char **arr = malloc(50*sizeof(char*));
 	
 	//normalized line
 	//char *n_line = normalizeWord
@@ -194,7 +202,7 @@ char **parse_input(char *line){
 
 		// if line contains invalid input character raise error
 		if (!is_valid(p2)){
-			printf("Error: only enter alphabetical characters and spaces\n");
+			printf("Error: %c is not a valid character for input\n", *p2);
 			return NULL;
 		}
 
@@ -213,19 +221,80 @@ char **parse_input(char *line){
 
 	
 	// check ending word
-	if (p1 != line){
-		*p2 = '\0';
-		if (!is_empty(p1)){
-			arr[i] = p1;	
-		}
+	*p2 = '\0';
+	if (!is_empty(p1)){
+		arr[i] = p1;
+		i++;	
 	}
 
-	for (int j = 0; j <= i; j++){
+	for (int j = 0; j < i; j++){
 		printf("%s\n", arr[j]);
 	}
+		
+	s->arr = arr;
+	s->num_words = i;
 
-	return arr;
+	return s;
 }
+
+counters_t *
+querier(hashtable_t *index, parsed_line_t *s){
+
+	// maintains whether conjunction is last word seen
+	bool conj_last_seen = false;
+
+	counters_t *c_union = counters_new();
+	counters_t *c_intersect = NULL;
+
+	for (int i = 0; i < s->num_words; i++){
+		// edge case: first word is conjunction
+		if ((i == 0) && (is_conjunction(s->arr[i]))){
+			printf("Error: '%s' cannot be first\n", s->arr[i]);
+			return NULL;
+		}
+
+		// if conjunction, adjust counters sets
+		if (is_conjunction(s->arr[i])){
+			// bad case: two conjunctions in a row
+			if (conj_last_seen) {
+				printf("Error: cannot have two adjacent conjunctions\n");
+				return NULL;
+			}
+
+			conj_last_seen = true;
+
+			// if "or" seen, add c_intersect to union set and reset to NULL
+			if (strcmp(s->arr[i], "or") == 0){
+				counters_union(c_union, c_intersect);
+				counters_delete(c_intersect);
+				c_intersect = NULL;
+			}
+
+		// valid word seen, look up in index
+		} else {
+			counters_t *counters = hashtable_find(index, s->arr[i]);
+			if (counters != NULL){
+				// if intersection uninitialized, set to counters
+				if (c_intersect == NULL){
+					c_intersect = duplicate_counters(counters);
+				// otherwise, take intersection of counters with current intersect counters set
+				} else {
+					counters_t *new_intersection = counters_intersect(c_intersect, counters);
+					c_intersect = new_intersection;
+				}
+			}
+			conj_last_seen = false;	
+		}
+	}
+	if (c_intersect != NULL){	
+		counters_union(c_union, c_intersect);
+		counters_delete(c_intersect);
+	}
+	counters_print(c_union, stdout);
+	return c_union;
+}
+
+
 
 int main(int argc, char **argv){
 	if (argc != 3){
@@ -236,17 +305,49 @@ int main(int argc, char **argv){
 
 //	hashtable_print(index, stdout, print_item);
 	
+
+/*
+	printf("Testing parse_input:\n");
+	char line[50] = "alligator";
+	printf("%s\n", line);
+	parsed_line_t *s = parse_input(line);
+
+	for (int i = 0; i < s->num_words; i++){
+		printf("%s\n", s->arr[i]); 
+	} 
+
+*/
+/*
+	printf("Testing sort_counters:\n");
+	counters_print(c, stdout);
+	display_results(sort_counters(c), argv[1]);
+
+*/
+
+	
 	char *line = malloc(50);
 	printf("Query? ");
 	while (fgets(line, 50, stdin) != NULL){
-		char **arr = parse_input(line);
+		parsed_line_t *s  = parse_input(line);
 
-	//	counters_t *result = querier(index, line);
+
+		counters_t *result = querier(index, s);
+	//	sort_counters(result);
+
 	//	if (result != NULL){
 	//		display_results(result, argv[1]);
 	//	}
-	//	printf("Query? ");
+		counters_delete(result);
+		printf("Query? ");
+	
+		free(s->arr);
+		free(s);
 	}
+
+	free(line);
+
+	fclose(fp);
+	hashtable_delete(index, counters_delete);
 }
 
 
