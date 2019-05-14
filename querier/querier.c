@@ -12,7 +12,7 @@
 #include "set.h"
 #include "counters.h"
 #include "index.h"
-
+#include "word.h"
 
 
 /*************************** union and intersection utilities ************************/
@@ -147,7 +147,7 @@ void sort_helper(void *arg, const int key, const int count){
 
 // sorts counters into array of (key, count) structs
 void
-sort_and_display(counters_t *counters){
+sort_and_display(counters_t *counters, char *pageDirectory){
 
 	// get length of counters list
 	int c_size = 0;
@@ -155,6 +155,7 @@ sort_and_display(counters_t *counters){
 
 	// if counters list is empty, don't print anything
 	if (c_size == 0){
+		printf("No documents match\n");
 		return;
 	}
 
@@ -170,11 +171,39 @@ sort_and_display(counters_t *counters){
 	// fill sorted array
 	counters_iterate(counters, list, sort_helper);
 
-	// loop through array and print elements
+
+	char *docFilename = malloc((strlen(pageDirectory)+1)*sizeof(char) + sizeof(int));
+
+	// loop through array and print elements, clean up data structures
 	int k;
+	printf("Matches %d documents (ranked):\n", *(list->i));
 	for (k = 0; k < *(list->i); k++){
-		printf("document %d: %d\n", arr[k]->key, arr[k]->count);
+
+		// get filename for doc 		
+        	sprintf(docFilename, "%s/%d", pageDirectory, arr[k]->key);
+
+		// open file and get first line
+		FILE *fp;
+		if ((fp = fopen(docFilename, "r")) == NULL){
+			printf("Error opening file %s\n", docFilename);
+			return;
+		}
+		char *URL = freadlinep(fp);
+		// close file
+		fclose(fp);
+
+		//print results
+		printf("score %5d document %3d: %s\n", arr[k]->count, arr[k]->key, URL);
+
+		// clean up array while iterating
+		free(arr[k]);
+		free(URL);
 	}
+
+	free(docFilename);
+	free(arr);
+	free(list);
+	
 	return;
 }
 
@@ -182,16 +211,19 @@ sort_and_display(counters_t *counters){
 
 /*************************** main algorithm ***************************************/
 
+
+// struct to hold array of pointers to words and total number of words in query
 typedef struct parsed_line {
 	char ** arr;
 	int num_words;
 } parsed_line_t;
 
 
+// given a pointer to a string, parse_input returns parsed_line struct containing array of pointers and num_words
 parsed_line_t *
 parse_input(char *line){
 	parsed_line_t *s = malloc(sizeof(parsed_line_t)); 
-	char **arr = malloc(50*sizeof(char*));
+	char **arr = calloc(50, sizeof(char*));
 	
 	//normalized line
 	//char *n_line = normalizeWord
@@ -207,6 +239,8 @@ parse_input(char *line){
 		// if line contains invalid input character raise error
 		if (!is_valid(p2)){
 			printf("Error: %c is not a valid character for input\n", *p2);
+			free(arr);
+			free(s);
 			return NULL;
 		}
 
@@ -231,6 +265,13 @@ parse_input(char *line){
 		i++;	
 	}
 
+
+	int j;
+	printf("Query: ");
+	for (j = 0; j < i; j++){
+		printf("%s ", arr[j]);
+	}
+	printf("\n");
 		
 	s->arr = arr;
 	s->num_words = i;
@@ -238,6 +279,8 @@ parse_input(char *line){
 	return s;
 }
 
+
+// querier contains the main logic for taking the unions and intersections of queries
 counters_t *
 querier(hashtable_t *index, parsed_line_t *s){
 
@@ -252,6 +295,9 @@ querier(hashtable_t *index, parsed_line_t *s){
 		// edge case: first word is conjunction
 		if ((i == 0) && (is_conjunction(s->arr[i]))){
 			printf("Error: '%s' cannot be first\n", s->arr[i]);
+			// free data structures before returning
+			counters_delete(c_union);
+			counters_delete(c_intersect);
 			return NULL;
 		}
 
@@ -260,6 +306,9 @@ querier(hashtable_t *index, parsed_line_t *s){
 			// bad case: two conjunctions in a row
 			if (conj_last_seen) {
 				printf("Error: cannot have two adjacent conjunctions\n");
+				// free data structures before returning
+				counters_delete(c_union);
+				counters_delete(c_intersect);
 				return NULL;
 			}
 
@@ -287,16 +336,24 @@ querier(hashtable_t *index, parsed_line_t *s){
 					counters_delete(c_intersect);
 					c_intersect = new_intersection;
 				}
+			} else {
+				counters_delete(c_intersect);
+				c_intersect = counters_new();
 			}
 			conj_last_seen = false;	
 		}
 	}
-	
+
+	// check if query ends with conjunction	
 	if (conj_last_seen){
 		printf("Error: cannot end query with conjunction\n");
+		// free data structures before returning
+		counters_delete(c_union);
+		counters_delete(c_intersect);
 		return NULL;	
 	}
 
+	// take final union of intersection and union sets
 	if (c_intersect != NULL){	
 		counters_union(c_union, c_intersect);
 		counters_delete(c_intersect);
@@ -324,46 +381,33 @@ int main(int argc, char **argv){
 	// load file into index
 	hashtable_t *index = indexLoad(fp);
 
-//	hashtable_print(index, stdout, print_item);
-	
-
-/*
-	printf("Testing parse_input:\n");
-	char line[50] = "alligator";
-	printf("%s\n", line);
-	parsed_line_t *s = parse_input(line);
-
-	for (int i = 0; i < s->num_words; i++){
-		printf("%s\n", s->arr[i]); 
-	} 
-
-*/
-/*
-	printf("Testing sort_counters:\n");
-	counters_print(c, stdout);
-	display_results(sort_counters(c), argv[1]);
-
-*/
-
 	
 	char *line = malloc(50);
 	printf("Query? ");
 	while (fgets(line, 50, stdin) != NULL){
-		parsed_line_t *s  = parse_input(line);
+		char *normalized = normalizeWord(line);
+		parsed_line_t *s  = parse_input(normalized);
 
-		counters_t *result = querier(index, s);
+		if (s != NULL){
+
+			counters_t *result = querier(index, s);
 		
-		sort_and_display(result);
-		
-		counters_delete(result);
-		printf("Query? ");
+			if (result != NULL){
+				sort_and_display(result, argv[1]);
+				counters_delete(result);
+			}
+
+			printf("Query? ");
 	
-		free(s->arr);
-		free(s);
+			free(s->arr);
+			free(s);
+		}
+
+		free(normalized);
 	}
 
+	// clean up data structures
 	free(line);
-
 	fclose(fp);
 	hashtable_delete(index, counters_delete);
 }
