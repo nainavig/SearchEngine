@@ -51,6 +51,15 @@ else:
 ~~~
 
 
+###Error Handling
+
+The main function verifies that the arguments are valid. This includes checking whether the pageDirectory is a valid path and checking whether the maxDepth is an integer and within the specified range. 
+
+Within the body of the the functions, each time memory is allocated the pointer is verified to not be NULL before being used. 
+
+If the URL is unable to be normalized, the function prints an error message and returns. 
+
+
 
 
 

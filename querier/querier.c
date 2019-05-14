@@ -132,7 +132,7 @@ void sort_helper(void *arg, const int key, const int count){
 
 	// find index for node
 	int j = (*i)-1;
-	while (j >= 0 && arr[j]->count > count){
+	while ((j >= 0)&&(arr[j]->count < count)){
 		arr[j + 1] = arr[j];
 		j = j - 1;
 	}
@@ -200,6 +200,8 @@ sort_and_display(counters_t *counters, char *pageDirectory){
 		free(URL);
 	}
 
+
+	// clean up data structures
 	free(docFilename);
 	free(arr);
 	free(list);
@@ -263,6 +265,12 @@ parse_input(char *line){
 	if (!is_empty(p1)){
 		arr[i] = p1;
 		i++;	
+	}
+
+	if (i == 0){
+		free(arr);
+		free(s);
+		return NULL;
 	}
 
 
@@ -377,31 +385,50 @@ int main(int argc, char **argv){
 		printf("Error: indexFilename cannot be opened\n");
 		return 1;
 	}
+	
+	// make sure pageDirectory is directory produced by querier
+	char *docFilename = malloc((((strlen(argv[1])+1)+9))*sizeof(char));
+        sprintf(docFilename, "%s/%s", argv[1], ".crawler");
+	FILE *dir_fp;
+	if ((dir_fp = fopen(docFilename, "r")) == NULL){
+		printf("%s is not a pageDirectory produced by crawler\n", docFilename);
+		fclose(fp);
+		free(docFilename);
+		return 1;
+	}
+	fclose(dir_fp);
+	free(docFilename);
 
-	// load file into index
+
+
+	// load index file into index
 	hashtable_t *index = indexLoad(fp);
 
-	
-	char *line = malloc(50);
+
+
+	// take user inputs and pass to querier functions	
+	char *line = malloc(200);
 	printf("Query? ");
-	while (fgets(line, 50, stdin) != NULL){
+	while (fgets(line, 200, stdin) != NULL){
 		char *normalized = normalizeWord(line);
 		parsed_line_t *s  = parse_input(normalized);
 
 		if (s != NULL){
 
 			counters_t *result = querier(index, s);
-		
+			
 			if (result != NULL){
 				sort_and_display(result, argv[1]);
 				counters_delete(result);
 			}
 
-			printf("Query? ");
-	
 			free(s->arr);
 			free(s);
 		}
+
+
+		printf("\n----------------------------------------------------\n");		
+		printf("Query? ");
 
 		free(normalized);
 	}
@@ -409,7 +436,9 @@ int main(int argc, char **argv){
 	// clean up data structures
 	free(line);
 	fclose(fp);
-	hashtable_delete(index, counters_delete);
+	hashtable_delete(index, (void (*)(void*)) counters_delete);
+
+	return 0;
 }
 
 
